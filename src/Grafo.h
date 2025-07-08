@@ -1,3 +1,4 @@
+
 //
 // Created by Rafael on 28/05/2025.
 //
@@ -20,6 +21,7 @@ private:
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No*> lista_adj;
+    int findIndex(const vector<No*>& lista, char id);
 
 public:
     Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_ponderado_vertice, vector<No*> lista_adj);

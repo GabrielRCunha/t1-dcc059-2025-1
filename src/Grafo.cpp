@@ -1,4 +1,5 @@
 #include "Grafo.h"
+#include <set>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -344,13 +345,209 @@ vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b) {
 }
 
 vector<char> Grafo::caminho_minimo_floyd(int id_no, int id_no_b) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    const int INF = 1000000;
+    int n = ordem;
+
+    // Mapeamento dos IDs para índices 0..n-1
+    vector<char> vertices;
+    for (auto no : lista_adj) {
+        vertices.push_back(no->getId());
+    }
+
+    // Criar matriz de distâncias e matriz de próximos para reconstrução
+    vector<vector<int>> dist(n, vector<int>(n, INF));
+    vector<vector<int>> next(n, vector<int>(n, -1));
+
+    // Preencher distâncias iniciais
+    for (int i = 0; i < n; i++) {
+        dist[i][i] = 0;
+    }
+
+    // Preencher as distâncias entre vértices adjacentes
+    for (int i = 0; i < n; i++) {
+        No* no = lista_adj[i];
+        for (auto aresta : no->getArestas()) {
+            // encontrar índice do nó alvo
+            char alvo = aresta->getIdAlvo();
+            int j = -1;
+            for (int k = 0; k < n; k++) {
+                if (vertices[k] == alvo) {
+                    j = k;
+                    break;
+                }
+            }
+            if (j != -1) {
+                dist[i][j] = aresta->getPeso();
+                next[i][j] = j;
+            }
+        }
+    }
+
+    // Floyd-Warshall
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] == INF || dist[k][j] == INF) continue;
+                if (dist[i][j] > dist[i][k] + dist[k][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    next[i][j] = next[i][k];
+                }
+            }
+        }
+    }
+
+    // Encontrar índices dos vértices de entrada
+    int start = -1, end = -1;
+    for (int i = 0; i < n; i++) {
+        if (vertices[i] == id_no) start = i;
+        if (vertices[i] == id_no_b) end = i;
+    }
+
+    if (start == -1 || end == -1) {
+        // Vértices não encontrados
+        return {};
+    }
+
+    if (next[start][end] == -1) {
+        // Não há caminho
+        return {};
+    }
+
+    // Reconstruir caminho
+    vector<char> caminho;
+    int u = start;
+    while (u != end) {
+        caminho.push_back(vertices[u]);
+        u = next[u][end];
+        if (u == -1) return {}; // não há caminho
+    }
+    caminho.push_back(vertices[end]);
+
+    return caminho;
 }
 
 Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
-    cout<<"Metodo nao implementado"<<endl;
-    return nullptr;
+    int n = (int)ids_nos.size();
+    if (n == 0) return nullptr;
+
+    // Construir subgrafo induzido: só nós e arestas que ligam nós em ids_nos
+    vector<No*> sub_lista_adj;
+
+    // Mapa para saber se um vértice pertence ao subconjunto
+    set<char> conjunto(ids_nos.begin(), ids_nos.end());
+
+    for (char id : ids_nos) {
+        int idx = findIndex(lista_adj, id);
+        if (idx == -1) {
+            // Se algum vértice não existir, retornar nullptr
+            return nullptr;
+        }
+        No* no_orig = lista_adj[idx];
+        vector<Aresta*> arestas_filtradas;
+
+        // Filtrar só as arestas que apontam para vértices do subconjunto
+        for (Aresta* a : no_orig->getArestas()) {
+            if (conjunto.count(a->getIdAlvo()) > 0) {
+                arestas_filtradas.push_back(new Aresta(a->getIdOrigem(), a->getIdAlvo(), a->getPeso()));
+            }
+        }
+
+        // Criar novo nó para o subgrafo com as arestas filtradas
+        No* novo_no = new No(no_orig->getId(), no_orig->getPeso(), arestas_filtradas);
+        sub_lista_adj.push_back(novo_no);
+    }
+
+    // Agora aplicar Prim no subgrafo
+    // Vetores para controle
+    vector<bool> in_tree(n, false);
+    vector<int> key(n, 1000000); // valor infinito
+    vector<int> parent(n, -1);
+
+    // Começar do primeiro vértice do subconjunto
+    key[0] = 0;
+
+    for (int count = 0; count < n - 1; count++) {
+        // Escolher vértice com menor key ainda fora da árvore
+        int u = -1;
+        int min_key = 1000000;
+        for (int v = 0; v < n; v++) {
+            if (!in_tree[v] && key[v] < min_key) {
+                min_key = key[v];
+                u = v;
+            }
+        }
+
+        if (u == -1) break; // desconexo
+
+        in_tree[u] = true;
+
+        // Atualizar valores key e parent para os vizinhos de u
+        No* no_u = sub_lista_adj[u];
+        for (Aresta* a : no_u->getArestas()) {
+            char alvo = a->getIdAlvo();
+            int peso = a->getPeso();
+            int v = -1;
+            for (int i = 0; i < n; i++) {
+                if (sub_lista_adj[i]->getId() == alvo) {
+                    v = i;
+                    break;
+                }
+            }
+
+            if (v != -1 && !in_tree[v] && peso < key[v]) {
+                key[v] = peso;
+                parent[v] = u;
+            }
+        }
+    }
+
+    // Construir o grafo AGM resultado com os vértices do subconjunto e arestas da AGM
+    vector<No*> agm_lista_adj;
+
+    // Criar nós sem arestas (vamos adicionar depois)
+    for (int i = 0; i < n; i++) {
+        No* novo_no = new No(sub_lista_adj[i]->getId(), sub_lista_adj[i]->getPeso(), {});
+        agm_lista_adj.push_back(novo_no);
+    }
+
+    // Adicionar arestas da AGM: para cada v != 0, adicionar aresta parent[v] <-> v (bidirecional)
+    for (int v = 1; v < n; v++) {
+        int p = parent[v];
+        if (p != -1) {
+            char id_p = agm_lista_adj[p]->getId();
+            char id_v = agm_lista_adj[v]->getId();
+            int peso = key[v];
+
+            // Como seu grafo original é direcionado, mas a AGM é geralmente não direcionada,
+            // vamos adicionar as arestas nos dois sentidos
+
+            Aresta* aresta1 = new Aresta(id_p, id_v, peso);
+            Aresta* aresta2 = new Aresta(id_v, id_p, peso);
+
+            agm_lista_adj[p]->adicionarAresta(aresta1);
+            agm_lista_adj[v]->adicionarAresta(aresta2);
+        }
+    }
+
+    // Liberar subgrafo temporário criado (arestas e nós)
+    for (No* no : sub_lista_adj) {
+        for (Aresta* a : no->getArestas()) {
+            delete a;
+        }
+        delete no;
+
+    }
+    // Retornar novo grafo AGM
+    return new Grafo(n, false, true, false, agm_lista_adj);
+}
+
+// Função auxiliar para encontrar índice de um vértice no vetor lista_adj
+int Grafo::findIndex(const vector<No*>& lista, char id) {
+    for (int i = 0; i < (int)lista.size(); i++) {
+        if (lista[i]->getId() == id)
+            return i;
+    }
+    return -1;
 }
 
 Grafo* Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos) {
