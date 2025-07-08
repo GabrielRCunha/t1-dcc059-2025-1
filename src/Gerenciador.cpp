@@ -115,7 +115,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout << "Caminho minimo de " << id_no_1 << " ate " << id_no_2 << " (Dijkstra): ";
             if (caminho_minimo_dijkstra.empty()) //Verifica se há caminho entre os vértices escolhidos
             {
-                cout << "Não existe caminho entre os vértices." << endl;
+                cout << "Nao ha caminho entre os nos." << endl;
             }
             else
             {
@@ -239,18 +239,6 @@ void Gerenciador::comandos(Grafo* grafo) {
             grafo->calcular_raio_diametro_centro_periferia();
             break;
         }
-        case 'i': {
-
-            vector<char> articulacao = grafo->vertices_de_articulacao();
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
-
-            if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
-            }
-
-            break;
-        }
-
         case '0': {
             exit(0);
         }
