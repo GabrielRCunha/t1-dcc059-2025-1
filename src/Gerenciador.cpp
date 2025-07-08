@@ -197,43 +197,86 @@ void Gerenciador::comandos(Grafo* grafo) {
         }
 
         case 'f': {
+    int tam;
+    cout << "Digite o tamanho do subconjunto: ";
+    cin >> tam;
 
-            int tam;
-            cout<<"Digite o tamanho do subconjunto: ";
-            cin>>tam;
-
-            if(tam > 0 && tam <= grafo->getOrdem()) {
-
-                vector<char> ids = get_conjunto_ids(grafo,tam);
-                Grafo* arvore_geradora_minima_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
-                cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
-
-                if(pergunta_imprimir_arquivo("agm_kruskal.txt")) {
-                    cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
-                }
-
-                delete arvore_geradora_minima_kruskal;
-
-            }else {
-                cout<<"Valor invalido"<<endl;
+    if(tam > 0 && tam <= grafo->getOrdem()) {
+        vector<char> ids = get_conjunto_ids(grafo, tam);
+        Grafo* arvore_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
+        
+        // Impressão em tela
+        cout << "\nArvore Geradora Minima (Kruskal):\n";
+        for (No* no : arvore_kruskal->getListaAdj()) {
+            cout << "No " << no->getId() << " -> ";
+            for (Aresta* a : no->getArestas()) {
+                cout << a->getIdAlvo() << " (peso " << a->getPeso() << "), ";
             }
-
-            break;
+            cout << endl;
         }
+        cout << endl;
+
+        if(pergunta_imprimir_arquivo("agm_kruskal.txt")) {
+            ofstream out("agm_kruskal.txt");
+            if (out.is_open()) {
+                out << "Arvore Geradora Minima (Kruskal):\n";
+                for (No* no : arvore_kruskal->getListaAdj()) {
+                    out << no->getId() << " -> ";
+                    for (Aresta* a : no->getArestas()) {
+                        out << a->getIdAlvo() << " (peso " << a->getPeso() << "), ";
+                    }
+                    out << "\n";
+                }
+                out.close();
+                cout << "AGM salva em agm_kruskal.txt\n";
+            } else {
+                cout << "Erro ao criar arquivo!\n";
+            }
+        }
+
+        delete arvore_kruskal;
+    } else {
+        cout << "Valor invalido\n";
+    }
+    break;
+}
 
         case 'g': {
-
-            char id_no = get_id_entrada();
-            Grafo* arvore_caminhamento_profundidade = grafo->arvore_caminhamento_profundidade(id_no);
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
-
-            if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
-            }
-
-            delete arvore_caminhamento_profundidade;
-            break;
+    char id_no = get_id_entrada();
+    Grafo* arvore = grafo->arvore_caminhamento_profundidade(id_no);
+    
+    // Impressão em tela
+    cout << "\nArvore de Caminhamento em Profundidade a partir de " << id_no << ":\n";
+    for (No* no : arvore->getListaAdj()) {
+        cout << "No " << no->getId() << " -> ";
+        for (Aresta* a : no->getArestas()) {
+            cout << a->getIdAlvo() << " ";
         }
+        cout << endl;
+    }
+    cout << endl;
+
+    if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
+        ofstream out("arvore_caminhamento_profundidade.txt");
+        if (out.is_open()) {
+            out << "Arvore de Caminhamento em Profundidade a partir de " << id_no << ":\n";
+            for (No* no : arvore->getListaAdj()) {
+                out << no->getId() << " -> ";
+                for (Aresta* a : no->getArestas()) {
+                    out << a->getIdAlvo() << " ";
+                }
+                out << "\n";
+            }
+            out.close();
+            cout << "Arvore salva em arvore_caminhamento_profundidade.txt\n";
+        } else {
+            cout << "Erro ao criar arquivo!\n";
+        }
+    }
+
+    delete arvore;
+    break;
+}
 
         case 'h': {
             grafo->calcular_raio_diametro_centro_periferia();
