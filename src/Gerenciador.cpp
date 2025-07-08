@@ -160,26 +160,53 @@ void Gerenciador::comandos(Grafo* grafo) {
 
         case 'd': {
 
-            char id_no_1 = get_id_entrada();
+char id_no_1 = get_id_entrada();
             char id_no_2 = get_id_entrada();
             vector<char> caminho_minimo_floyd = grafo->caminho_minimo_floyd(id_no_1, id_no_2);
 
-            cout << "Caminho minimo de " << id_no_1 << " ate " << id_no_2 << " (Floyd): ";
-            if (caminho_minimo_floyd.empty()) {
-                cout << "Nao existe caminho entre os vertices." << endl;
-            } else {
-                for (int i = 0; i < caminho_minimo_floyd.size(); i++) {
-                    cout << caminho_minimo_floyd[i];
-                    if (i < (int)caminho_minimo_floyd.size() - 1) cout << ",";
-        }
-            cout << endl;
-    }
+            cout << "Caminho minimo entre " << id_no_1 << " e " << id_no_2 << ": ";
+            if (caminho_minimo_floyd.empty())
+            {
+                cout << "Nao existe caminho entre os nos." << endl;
+            }
+            else
+            {
+                for (char c : caminho_minimo_floyd)
+                {
+                    cout << c << " ";
+                }
+                cout << endl;
 
-    if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt")) {
-        cout << "Metodo de impressao em arquivo nao implementado" << endl;
-    }
+                cout << endl;
+            }
 
-    break;
+            if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt"))
+            {
+                ofstream outFile("caminho_minimo_floyd.txt");
+                if (outFile.is_open())
+                {
+                    if (caminho_minimo_floyd.empty())
+                    {
+                        outFile << "Nao existe caminho entre " << id_no_1 << " e " << id_no_2 << "." << endl;
+                    }
+                    else
+                    {
+                        for (size_t i = 0; i < caminho_minimo_floyd.size(); ++i)
+                        {
+                            outFile << caminho_minimo_floyd[i] << (i == caminho_minimo_floyd.size() - 1 ? "" : " -> ");
+                        }
+                        outFile << endl;
+                    }
+                    cout << "Caminho minimo salvo em caminho_minimo_floyd.txt" << endl;
+                    outFile.close();
+                }
+                else
+                {
+                    cout << "Erro ao abrir o arquivo para escrita." << endl;
+                }
+            }
+
+            break;
         }
         case 'e': {
 
