@@ -209,21 +209,19 @@ char id_no_1 = get_id_entrada();
             break;
         }
         case 'e': {
-
     int tam;
     cout << "Digite o tamanho do subconjunto: ";
     cin >> tam;
 
     if (tam > 0 && tam <= grafo->getOrdem()) {
-
         vector<char> ids = get_conjunto_ids(grafo, tam);
-        Grafo* arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
+        Grafo* agm_prim = grafo->arvore_geradora_minima_prim(ids);
 
-        if (arvore_geradora_minima_prim == nullptr) {
-            cout << "Erro: Subconjunto inválido ou grafo desconexo." << endl << endl;
+        if (agm_prim == nullptr) {
+            cout << "Erro: Subconjunto invalido ou grafo desconexo." << endl << endl;
         } else {
-            cout << "Arvore Geradora Minima (Prim) no subgrafo induzido pelos vertices selecionados:" << endl;
-            for (No* no : arvore_geradora_minima_prim->getListaAdj()) {
+            cout << "Arvore Geradora Minima (Prim):" << endl;
+            for (No* no : agm_prim->getListaAdj()) {
                 cout << "No " << no->getId() << ": ";
                 vector<Aresta*> arestas = no->getArestas();
                 for (int i = 0; i < (int)arestas.size(); i++) {
@@ -233,103 +231,137 @@ char id_no_1 = get_id_entrada();
                 }
                 cout << endl;
             }
-            cout << endl;
+
+            if (pergunta_imprimir_arquivo("agm_prim.txt")) {
+                ofstream out("agm_prim.txt");
+                if (out.is_open()) {
+                    for (No* no : agm_prim->getListaAdj()) {
+                        out << "No " << no->getId() << ": ";
+                        vector<Aresta*> arestas = no->getArestas();
+                        for (int i = 0; i < (int)arestas.size(); i++) {
+                            out << "(" << arestas[i]->getIdOrigem() << " -> " << arestas[i]->getIdAlvo()
+                                << ", peso: " << arestas[i]->getPeso() << ")";
+                            if (i < (int)arestas.size() - 1) out << ", ";
+                        }
+                        out << endl;
+                    }
+                    out.close();
+                    cout << "AGM (Prim) salva em agm_prim.txt" << endl;
+                } else {
+                    cout << "Erro ao salvar arquivo." << endl;
+                }
+            }
         }
 
-        if (pergunta_imprimir_arquivo("agm_prim.txt")) {
-            cout << "Metodo de impressao em arquivo nao implementado" << endl;
-        }
-
-        delete arvore_geradora_minima_prim;
+        delete agm_prim;
 
     } else {
         cout << "Valor invalido" << endl;
     }
 
     break;
-        }
+}
+
 
         case 'f': {
     int tam;
     cout << "Digite o tamanho do subconjunto: ";
     cin >> tam;
 
-    if(tam > 0 && tam <= grafo->getOrdem()) {
+    if (tam > 0 && tam <= grafo->getOrdem()) {
         vector<char> ids = get_conjunto_ids(grafo, tam);
-        Grafo* arvore_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
-        
-        // Impressão em tela
-        cout << "\nArvore Geradora Minima (Kruskal):\n";
-        for (No* no : arvore_kruskal->getListaAdj()) {
-            cout << "No " << no->getId() << " -> ";
-            for (Aresta* a : no->getArestas()) {
-                cout << a->getIdAlvo() << " (peso " << a->getPeso() << "), ";
-            }
-            cout << endl;
-        }
-        cout << endl;
+        Grafo* agm_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
 
-        if(pergunta_imprimir_arquivo("agm_kruskal.txt")) {
-            ofstream out("agm_kruskal.txt");
-            if (out.is_open()) {
-                out << "Arvore Geradora Minima (Kruskal):\n";
-                for (No* no : arvore_kruskal->getListaAdj()) {
-                    out << no->getId() << " -> ";
-                    for (Aresta* a : no->getArestas()) {
-                        out << a->getIdAlvo() << " (peso " << a->getPeso() << "), ";
-                    }
-                    out << "\n";
+        if (agm_kruskal == nullptr) {
+            cout << "Erro: Subconjunto invalido ou grafo desconexo." << endl << endl;
+        } else {
+            cout << "Arvore Geradora Minima (Kruskal):" << endl;
+            for (No* no : agm_kruskal->getListaAdj()) {
+                cout << "No " << no->getId() << ": ";
+                vector<Aresta*> arestas = no->getArestas();
+                for (int i = 0; i < arestas.size(); i++) {
+                    cout << "(" << arestas[i]->getIdOrigem() << " -> " << arestas[i]->getIdAlvo()
+                         << ", peso: " << arestas[i]->getPeso() << ")";
+                    if (i < (int)arestas.size() - 1) cout << ", ";
                 }
-                out.close();
-                cout << "AGM salva em agm_kruskal.txt\n";
-            } else {
-                cout << "Erro ao criar arquivo!\n";
+                cout << endl;
+            }
+
+            if (pergunta_imprimir_arquivo("agm_kruskal.txt")) {
+                ofstream out("agm_kruskal.txt");
+                if (out.is_open()) {
+                    for (No* no : agm_kruskal->getListaAdj()) {
+                        out << "No " << no->getId() << ": ";
+                        vector<Aresta*> arestas = no->getArestas();
+                        for (int i = 0; i < arestas.size(); i++) {
+                            out << "(" << arestas[i]->getIdOrigem() << " -> " << arestas[i]->getIdAlvo()
+                                << ", peso: " << arestas[i]->getPeso() << ")";
+                            if (i < (int)arestas.size() - 1) out << ", ";
+                        }
+                        out << endl;
+                    }
+                    out.close();
+                    cout << "AGM (Kruskal) salva em agm_kruskal.txt" << endl;
+                } else {
+                    cout << "Erro ao salvar arquivo." << endl;
+                }
             }
         }
 
-        delete arvore_kruskal;
+        delete agm_kruskal;
+
     } else {
-        cout << "Valor invalido\n";
+        cout << "Valor invalido" << endl;
     }
+
     break;
 }
 
         case 'g': {
     char id_no = get_id_entrada();
     Grafo* arvore = grafo->arvore_caminhamento_profundidade(id_no);
-    
-    // Impressão em tela
-    cout << "\nArvore de Caminhamento em Profundidade a partir de " << id_no << ":\n";
-    for (No* no : arvore->getListaAdj()) {
-        cout << "No " << no->getId() << " -> ";
-        for (Aresta* a : no->getArestas()) {
-            cout << a->getIdAlvo() << " ";
-        }
-        cout << endl;
-    }
-    cout << endl;
 
-    if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-        ofstream out("arvore_caminhamento_profundidade.txt");
-        if (out.is_open()) {
-            out << "Arvore de Caminhamento em Profundidade a partir de " << id_no << ":\n";
-            for (No* no : arvore->getListaAdj()) {
-                out << no->getId() << " -> ";
-                for (Aresta* a : no->getArestas()) {
-                    out << a->getIdAlvo() << " ";
-                }
-                out << "\n";
+    if (arvore == nullptr) {
+        cout << "Erro ao gerar arvore de profundidade." << endl;
+    } else {
+        cout << "Arvore de Caminhamento em Profundidade a partir de " << id_no << ":" << endl;
+        for (No* no : arvore->getListaAdj()) {
+            cout << "No " << no->getId() << ": ";
+            vector<Aresta*> arestas = no->getArestas();
+            for (int i = 0; i < arestas.size(); i++) {
+                cout << "(" << arestas[i]->getIdOrigem() << " -> " << arestas[i]->getIdAlvo()
+                     << ", peso: " << arestas[i]->getPeso() << ")";
+                if (i < (int)arestas.size() - 1) cout << ", ";
             }
-            out.close();
-            cout << "Arvore salva em arvore_caminhamento_profundidade.txt\n";
-        } else {
-            cout << "Erro ao criar arquivo!\n";
+            cout << endl;
         }
+
+        if (pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
+            ofstream out("arvore_caminhamento_profundidade.txt");
+            if (out.is_open()) {
+                for (No* no : arvore->getListaAdj()) {
+                    out << "No " << no->getId() << ": ";
+                    vector<Aresta*> arestas = no->getArestas();
+                    for (int i = 0; i < arestas.size(); i++) {
+                        out << "(" << arestas[i]->getIdOrigem() << " -> " << arestas[i]->getIdAlvo()
+                            << ", peso: " << arestas[i]->getPeso() << ")";
+                        if (i < (int)arestas.size() - 1) out << ", ";
+                    }
+                    out << endl;
+                }
+                out.close();
+                cout << "Arvore de profundidade salva em arvore_caminhamento_profundidade.txt" << endl;
+            } else {
+                cout << "Erro ao salvar arquivo." << endl;
+            }
+        }
+
+        delete arvore;
     }
 
-    delete arvore;
     break;
 }
+
 
         case 'h': {
             grafo->calcular_raio_diametro_centro_periferia();
