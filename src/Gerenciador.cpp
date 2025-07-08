@@ -1,3 +1,4 @@
+
 #include "Gerenciador.h"
 #include "Grafo.h"
 #include <fstream>
@@ -115,7 +116,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout << "Caminho minimo de " << id_no_1 << " ate " << id_no_2 << " (Dijkstra): ";
             if (caminho_minimo_dijkstra.empty()) //Verifica se há caminho entre os vértices escolhidos
             {
-                cout << "Não existe caminho entre os vértices." << endl;
+                cout << "Nao ha caminho entre os nos." << endl;
             }
             else
             {
@@ -161,39 +162,64 @@ void Gerenciador::comandos(Grafo* grafo) {
 
             char id_no_1 = get_id_entrada();
             char id_no_2 = get_id_entrada();
-            vector<char> caminho_minimo_floyd = grafo->caminho_minimo_floyd(id_no_1,id_no_2);
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+            vector<char> caminho_minimo_floyd = grafo->caminho_minimo_floyd(id_no_1, id_no_2);
 
-            if(pergunta_imprimir_arquivo("caminho_minimo_floyd.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
-            }
+            cout << "Caminho minimo de " << id_no_1 << " ate " << id_no_2 << " (Floyd): ";
+            if (caminho_minimo_floyd.empty()) {
+                cout << "Nao existe caminho entre os vertices." << endl;
+            } else {
+                for (int i = 0; i < caminho_minimo_floyd.size(); i++) {
+                    cout << caminho_minimo_floyd[i];
+                    if (i < (int)caminho_minimo_floyd.size() - 1) cout << ",";
+        }
+            cout << endl;
+    }
 
+    if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt")) {
+        cout << "Metodo de impressao em arquivo nao implementado" << endl;
+    }
 
-            break;
+    break;
         }
         case 'e': {
 
-            int tam;
-            cout<<"Digite o tamanho do subconjunto: ";
-            cin>>tam;
+    int tam;
+    cout << "Digite o tamanho do subconjunto: ";
+    cin >> tam;
 
-            if(tam > 0 && tam <= grafo->getOrdem()) {
+    if (tam > 0 && tam <= grafo->getOrdem()) {
 
-                vector<char> ids = get_conjunto_ids(grafo,tam);
-                Grafo* arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
-                cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+        vector<char> ids = get_conjunto_ids(grafo, tam);
+        Grafo* arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
 
-                if(pergunta_imprimir_arquivo("agm_prim.txt")) {
-                    cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+        if (arvore_geradora_minima_prim == nullptr) {
+            cout << "Erro: Subconjunto inválido ou grafo desconexo." << endl << endl;
+        } else {
+            cout << "Arvore Geradora Minima (Prim) no subgrafo induzido pelos vertices selecionados:" << endl;
+            for (No* no : arvore_geradora_minima_prim->getListaAdj()) {
+                cout << "No " << no->getId() << ": ";
+                vector<Aresta*> arestas = no->getArestas();
+                for (int i = 0; i < (int)arestas.size(); i++) {
+                    cout << "(" << arestas[i]->getIdOrigem() << " -> " << arestas[i]->getIdAlvo()
+                         << ", peso: " << arestas[i]->getPeso() << ")";
+                    if (i < (int)arestas.size() - 1) cout << ", ";
                 }
-
-                delete arvore_geradora_minima_prim;
-
-            }else {
-                cout<<"Valor invalido"<<endl;
+                cout << endl;
             }
+            cout << endl;
+        }
 
-            break;
+        if (pergunta_imprimir_arquivo("agm_prim.txt")) {
+            cout << "Metodo de impressao em arquivo nao implementado" << endl;
+        }
+
+        delete arvore_geradora_minima_prim;
+
+    } else {
+        cout << "Valor invalido" << endl;
+    }
+
+    break;
         }
 
         case 'f': {
@@ -282,18 +308,6 @@ void Gerenciador::comandos(Grafo* grafo) {
             grafo->calcular_raio_diametro_centro_periferia();
             break;
         }
-        case 'i': {
-
-            vector<char> articulacao = grafo->vertices_de_articulacao();
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
-
-            if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
-            }
-
-            break;
-        }
-
         case '0': {
             exit(0);
         }
