@@ -796,3 +796,18 @@ void Grafo::calcular_raio_diametro_centro_periferia() {
     }
     cout << endl << endl;
 }
+
+vector<char> Grafo::guloso()
+{
+
+}
+
+vector<char> Grafo::guloso_aleatorio(int iteracoes, float alfa)
+{
+
+}
+
+vector<char> Grafo::guloso_aleatorio_reativo(int iteracoes, vector<float> alfas, int bloco)
+{
+
+}

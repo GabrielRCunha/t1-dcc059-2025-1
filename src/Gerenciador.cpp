@@ -14,6 +14,7 @@ void Gerenciador::comandos(Grafo* grafo) {
     cout<<"(f) Arvore Geradora Minima (Algoritmo de Kruskal);"<<endl;
     cout<<"(g) Arvore de caminhamento em profundidade;"<<endl;
     cout<<"(h) Raio, diametro, centro e periferia do grafo;"<<endl;
+    cout<<"(i) Algoritmos gulosos (2-distance Dominating Set)"<<endl;
     cout<<"(0) Sair;"<<endl<<endl;
 
     char resp;
@@ -367,6 +368,11 @@ char id_no_1 = get_id_entrada();
             grafo->calcular_raio_diametro_centro_periferia();
             break;
         }
+
+        case 'i': {
+            comandosGulosos(grafo);
+        }
+
         case '0': {
             exit(0);
         }
@@ -377,6 +383,93 @@ char id_no_1 = get_id_entrada();
 
     comandos(grafo);
 
+}
+
+void Gerenciador::comandosGulosos(Grafo* grafo) {
+    cout<<"Digite uma das opcoes abaixo e pressione enter:"<<endl<<endl;
+    cout<<"(a) Algoritmo guloso (2-distance Dominating Set)"<<endl;
+    cout<<"(b) Algoritmo guloso randomizado adaptativo (2-distance Dominating Set)"<<endl;
+    cout<<"(c) Algoritmo guloso randomizado adaptativo reativo (2-distance Dominating Set)"<<endl;
+    cout<<"(0) Sair"<<endl<<endl;
+
+    char resp;
+    cin >> resp;
+    switch (resp)
+    {
+        case 'a': {
+            vector<char> r = grafo->guloso();
+            cout<<"Algoritmo guloso (2-distance Dominating Set):"<<endl;
+            for(int i = 0; i < r.size(); i++)
+            {
+                cout << r[i];
+                if (i < (int)r.size() - 1)
+                cout << ",";
+            }
+            cout << endl << endl;
+            break;
+        }
+
+        case 'b': {
+            int iteracoes;
+            cout<<"Digite o número máximo de iterações"<<endl;
+            cin>>iteracoes;
+            float alfa;
+            while(alfa < 0 || alfa > 1)
+            {
+                cout<<"Digite o valor de alfa (de 0 a 1)"<<endl;
+                cin>>alfa;
+            }
+
+            vector<char> r = grafo->guloso_aleatorio(iteracoes, alfa);
+            cout<<"Algoritmo guloso randomizado adaptativo (2-distance Dominating Set):"<<endl;
+            for(int i = 0; i < r.size(); i++)
+            {
+                cout << r[i];
+                if (i < (int)r.size() - 1)
+                cout << ",";
+            }
+            cout << endl << endl;
+            break;
+        }
+
+        case 'c': {
+            int iteracoes, nAlfas, bloco;
+            cout<<"Digite o número máximo de iterações"<<endl;
+            cin>>iteracoes;
+            cout<<"Digite o número de alfas"<<endl;
+            cin>>nAlfas;
+            cout<<"Digite o tamanho do bloco"<<endl;
+            cin>>bloco;
+            
+            cout<<"Digite os valores dos alfas: "<<endl;
+            vector<float> alfas(nAlfas);
+            for(int i = 0; i < nAlfas; i++)
+            while(alfas[i] < 0 || alfas[i] > 1)
+            {
+                cout<<"Digite o valor do alfa " << alfas[i] <<" (de 0 a 1)"<<endl;
+                cin>>alfas[i];
+            }
+
+            vector<char> r = grafo->guloso_aleatorio_reativo(iteracoes, alfas, bloco);
+            cout<<"Algoritmo guloso randomizado adaptativo reativo (2-distance Dominating Set):"<<endl;
+            for(int i = 0; i < r.size(); i++)
+            {
+                cout << r[i];
+                if (i < (int)r.size() - 1)
+                cout << ",";
+            }
+            cout << endl << endl;
+            break;
+        }
+
+        case '0': {
+            exit(0);
+        }
+
+        default: {
+            cout<<"Opção inválida"<<endl;
+        }
+    }
 }
 
 char Gerenciador::get_id_entrada() {

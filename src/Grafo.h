@@ -50,6 +50,9 @@ public:
     vector<char> centro(); // h 3
     vector<char> periferia(); // h 4
     vector<char> vertices_de_articulacao(); // i
+    vector<char> guloso(); //Algoritmo guloso
+    vector<char> guloso_aleatorio(int iteracoes, float alfa); //Algoritmo guloso randomizado adaptativo;
+    vector<char> guloso_aleatorio_reativo(int iteracoes, vector<float> alfas, int bloco); //Algoritmo guloso randomizado adaptativo reativo;
 };
 
 
