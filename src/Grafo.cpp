@@ -855,7 +855,64 @@ vector<char> Grafo::guloso()
 
 vector<char> Grafo::guloso_aleatorio(int iteracoes, float alfa)
 {
+   /*
+    melhor_solucao ← vazio
+3      melhor_tamanho ← número_total_vertices + 1
 
+4      Para it = 1 até iteracoes:
+5          D ← vazio                              
+6          coberto[v] ← falso para todo v         
+
+7          Enquanto existir vértice não coberto:
+8              candidatos ← lista vazia
+
+9              Para cada vértice v no grafo:
+10                 cobertura ← 0
+11                 visitado ← vazio
+12                 Fila BFS ← (v, 0) 
+13                 Marcar visitado[v] ← verdadeiro
+
+14                 Enquanto Fila não vazia:
+15                     (u, dist) ← remover primeiro da Fila
+16                     Se dist ≤ 2 E coberto[u] = falso:
+17                         cobertura ← cobertura + 1
+18                     Se dist < 2:
+19                         Para cada vizinho w de u:
+20                             Se visitado[w] = falso:
+21                                 Marcar visitado[w] ← verdadeiro
+22                                 Inserir (w, dist + 1) na Fila
+
+23                 Adicionar (v, cobertura) a candidatos
+
+24             Ordenar candidatos por cobertura decrescente
+
+25             tamanho_LRC ← max(1, ceil(alfa * |candidatos|))
+26             índice_escolhido ← aleatório entre 0 e tamanho_LRC - 1
+27             escolhido ← candidatos[índice_escolhido].vértice
+
+28             Adicionar escolhido a D
+
+29             // Marcar como cobertos todos vértices a distância ≤ 2 do escolhido
+30             visitado ← vazio
+31             Fila BFS ← (escolhido, 0)
+32             Marcar visitado[escolhido] ← verdadeiro
+
+33             Enquanto Fila não vazia:
+34                 (u, dist) ← remover primeiro da Fila
+35                 Se dist ≤ 2:
+36                     coberto[u] ← verdadeiro
+37                 Se dist < 2:
+38                     Para cada vizinho w de u:
+39                         Se visitado[w] = falso:
+40                             Marcar visitado[w] ← verdadeiro
+41                             Inserir (w, dist + 1) na Fila
+
+42         Se |D| < melhor_tamanho:
+43             melhor_solucao ← D
+44             melhor_tamanho ← |D|
+
+45     Retornar melhor_solucao
+   */
 }
 
 vector<char> Grafo::guloso_aleatorio_reativo(int iteracoes, vector<float> alfas, int bloco)
