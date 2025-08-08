@@ -799,7 +799,58 @@ void Grafo::calcular_raio_diametro_centro_periferia() {
 
 vector<char> Grafo::guloso()
 {
+    vector<char> resultado;
+    vector<char> vertices_restantes;
 
+    // Preenchendo a lista com todos os vértices.
+    for (No* no : lista_adj)
+        vertices_restantes.push_back(no->getId());
+
+    while (!vertices_restantes.empty())
+    {
+        // Escolhe o vértice de maior grau.
+        char v = vertices_restantes.front();
+        int maior_grau = -1;
+
+        for (char u : vertices_restantes)
+        {
+            No* no_u = getNoById(u);
+            int grau_u = no_u->getArestas().size();
+            if (grau_u > maior_grau)
+            {
+                maior_grau = grau_u;
+                v = u;
+            }
+        }
+
+        resultado.push_back(v);
+
+        // Remove v e todos os vizinhos.
+        vector<char> novos_restantes;
+        for (char u : vertices_restantes)
+        {
+            if (u == v) continue;
+
+            // Condicional, se é vizinho de v.
+            No* no_v = getNoById(v);
+            bool ehVizinho = false;
+            for (Aresta* a : no_v->getArestas())
+            {
+                if (a->getIdAlvo() == u)
+                {
+                    ehVizinho = true;
+                    break;
+                }
+            }
+
+            if (!ehVizinho)
+                novos_restantes.push_back(u);
+        }
+
+        vertices_restantes = novos_restantes;
+    }
+
+    return resultado;
 }
 
 vector<char> Grafo::guloso_aleatorio(int iteracoes, float alfa)
