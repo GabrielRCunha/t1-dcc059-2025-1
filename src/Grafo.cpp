@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <unordered_map>
 #include <stack>
+#include <ctime>
+#include <math.h>
 
 
 Grafo::Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_ponderado_vertice, vector<No*> lista_adj) {
@@ -855,65 +857,80 @@ vector<char> Grafo::guloso()
 
 vector<char> Grafo::guloso_aleatorio(int iteracoes, float alfa)
 {
-   /*
-    melhor_solucao ← vazio
-3      melhor_tamanho ← número_total_vertices + 1
+    srand(time(NULL)); // semente aleatória
 
-4      Para it = 1 até iteracoes:
-5          D ← vazio                              
-6          coberto[v] ← falso para todo v         
+    vector<char> melhor_solucao;
+    int melhor_tamanho = lista_adj.size() + 1; // número total de vértices + 1
 
-7          Enquanto existir vértice não coberto:
-8              candidatos ← lista vazia
+    for (int it = 0; it < iteracoes; it++)
+    {
+        vector<char> resultado;
+        vector<char> vertices_restantes;
 
-9              Para cada vértice v no grafo:
-10                 cobertura ← 0
-11                 visitado ← vazio
-12                 Fila BFS ← (v, 0) 
-13                 Marcar visitado[v] ← verdadeiro
+        // Preenche com todos os vértices
+        for (No* no : lista_adj)
+            vertices_restantes.push_back(no->getId());
 
-14                 Enquanto Fila não vazia:
-15                     (u, dist) ← remover primeiro da Fila
-16                     Se dist ≤ 2 E coberto[u] = falso:
-17                         cobertura ← cobertura + 1
-18                     Se dist < 2:
-19                         Para cada vizinho w de u:
-20                             Se visitado[w] = falso:
-21                                 Marcar visitado[w] ← verdadeiro
-22                                 Inserir (w, dist + 1) na Fila
+        while (!vertices_restantes.empty())
+        {
+            // Lista de candidatos: (vértice, grau)
+            vector<pair<char, int>> candidatos;
+            for (char u : vertices_restantes)
+            {
+                No* no_u = getNoById(u);
+                int grau_u = no_u->getArestas().size();
+                candidatos.push_back({u, grau_u});
+            }
 
-23                 Adicionar (v, cobertura) a candidatos
+            // Ordena por grau decrescente
+            sort(candidatos.begin(), candidatos.end(),
+                 [](auto &a, auto &b) { return a.second > b.second; });
 
-24             Ordenar candidatos por cobertura decrescente
+            // Define tamanho da LRC
+            int tamanho_LRC = max(1, (int)ceil(alfa * candidatos.size()));
 
-25             tamanho_LRC ← max(1, ceil(alfa * |candidatos|))
-26             índice_escolhido ← aleatório entre 0 e tamanho_LRC - 1
-27             escolhido ← candidatos[índice_escolhido].vértice
+            // Escolhe aleatoriamente um vértice da LRC
+            int indice_escolhido = rand() % tamanho_LRC;
+            char v = candidatos[indice_escolhido].first;
 
-28             Adicionar escolhido a D
+            resultado.push_back(v);
 
-29             // Marcar como cobertos todos vértices a distância ≤ 2 do escolhido
-30             visitado ← vazio
-31             Fila BFS ← (escolhido, 0)
-32             Marcar visitado[escolhido] ← verdadeiro
+            // Remove v e seus vizinhos
+            vector<char> novos_restantes;
+            No* no_v = getNoById(v);
 
-33             Enquanto Fila não vazia:
-34                 (u, dist) ← remover primeiro da Fila
-35                 Se dist ≤ 2:
-36                     coberto[u] ← verdadeiro
-37                 Se dist < 2:
-38                     Para cada vizinho w de u:
-39                         Se visitado[w] = falso:
-40                             Marcar visitado[w] ← verdadeiro
-41                             Inserir (w, dist + 1) na Fila
+            for (char u : vertices_restantes)
+            {
+                if (u == v) continue;
 
-42         Se |D| < melhor_tamanho:
-43             melhor_solucao ← D
-44             melhor_tamanho ← |D|
+                bool ehVizinho = false;
+                for (Aresta* a : no_v->getArestas())
+                {
+                    if (a->getIdAlvo() == u)
+                    {
+                        ehVizinho = true;
+                        break;
+                    }
+                }
 
-45     Retornar melhor_solucao
-   */
+                if (!ehVizinho)
+                    novos_restantes.push_back(u);
+            }
+
+            vertices_restantes = novos_restantes;
+        }
+
+        // Atualiza melhor solução
+        if ((int)resultado.size() < melhor_tamanho)
+        {
+            melhor_solucao = resultado;
+            melhor_tamanho = resultado.size();
+        }
+    }
+
+    return melhor_solucao;
 }
+
 
 vector<char> Grafo::guloso_aleatorio_reativo(int iteracoes, vector<float> alfas, int bloco)
 {
