@@ -406,6 +406,28 @@ void Gerenciador::comandosGulosos(Grafo* grafo) {
                 cout << ",";
             }
             cout << endl << endl;
+
+                if(pergunta_imprimir_arquivo("algoritmoGuloso.txt")) {
+                ofstream out("algoritmoGuloso.txt");
+                if (!out.is_open())
+                {
+                    cout << "ERRO!" << endl;
+                }
+                else
+                {
+                    out << "2-distance Dominating Set: ";
+                    for(int i = 0; i < r.size(); i++)
+                    {
+                        out << r[i];
+                        if (i < (int)r.size() - 1)
+                        out << ",";
+                    }
+                    out << endl;
+                    out.close();
+                    cout << "2-distance Dominating Set salvo em algoritmoGuloso.txt" << endl;
+                }
+            }
+
             break;
         }
 
@@ -429,6 +451,28 @@ void Gerenciador::comandosGulosos(Grafo* grafo) {
                 cout << ",";
             }
             cout << endl << endl;
+
+                if(pergunta_imprimir_arquivo("algoritmoGulosoRandomizado.txt")) {
+                ofstream out("algoritmoGulosoRanzomizado.txt");
+                if (!out.is_open())
+                {
+                    cout << "ERRO!" << endl;
+                }
+                else
+                {
+                    out << "2-distance Dominating Set: ";
+                    for(int i = 0; i < r.size(); i++)
+                    {
+                        out << r[i];
+                        if (i < (int)r.size() - 1)
+                        out << ",";
+                    }
+                    out << endl;
+                    out.close();
+                    cout << "2-distance Dominating Set salvo em algoritmoGulosoRandomizado.txt" << endl;
+                }
+            }
+
             break;
         }
 
@@ -459,6 +503,28 @@ void Gerenciador::comandosGulosos(Grafo* grafo) {
                 cout << ",";
             }
             cout << endl << endl;
+
+                if(pergunta_imprimir_arquivo("algoritmoGulosoRandomizadoReativo.txt")) {
+                ofstream out("algoritmoGulosoRandomizadoReativo.txt");
+                if (!out.is_open())
+                {
+                    cout << "ERRO!" << endl;
+                }
+                else
+                {
+                    out << "2-distance Dominating Set: ";
+                    for(int i = 0; i < r.size(); i++)
+                    {
+                        out << r[i];
+                        if (i < (int)r.size() - 1)
+                        out << ",";
+                    }
+                    out << endl;
+                    out.close();
+                    cout << "2-distance Dominating Set salvo em algoritmoGulosoRandomizadoReativo.txt" << endl;
+                }
+            }
+
             break;
         }
 
