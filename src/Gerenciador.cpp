@@ -433,9 +433,9 @@ void Gerenciador::comandosGulosos(Grafo* grafo) {
 
         case 'b': {
             int iteracoes;
-            cout<<"Digite o número máximo de iterações"<<endl;
+            cout<<"Digite o numero maximo de iteracoes"<<endl;
             cin>>iteracoes;
-            float alfa;
+            float alfa =-1;
             while(alfa < 0 || alfa > 1)
             {
                 cout<<"Digite o valor de alfa (de 0 a 1)"<<endl;
@@ -478,9 +478,9 @@ void Gerenciador::comandosGulosos(Grafo* grafo) {
 
         case 'c': {
             int iteracoes, nAlfas, bloco;
-            cout<<"Digite o número máximo de iterações"<<endl;
+            cout<<"Digite o numero maximo de iteracoes"<<endl;
             cin>>iteracoes;
-            cout<<"Digite o número de alfas"<<endl;
+            cout<<"Digite o numero de alfas"<<endl;
             cin>>nAlfas;
             cout<<"Digite o tamanho do bloco"<<endl;
             cin>>bloco;
@@ -488,10 +488,13 @@ void Gerenciador::comandosGulosos(Grafo* grafo) {
             cout<<"Digite os valores dos alfas: "<<endl;
             vector<float> alfas(nAlfas);
             for(int i = 0; i < nAlfas; i++)
-            while(alfas[i] < 0 || alfas[i] > 1)
             {
-                cout<<"Digite o valor do alfa " << alfas[i] <<" (de 0 a 1)"<<endl;
-                cin>>alfas[i];
+                alfas[i] = -1;
+                while(alfas[i] < 0 || alfas[i] > 1)
+                {
+                    cout<<"Digite o valor do alfa " << alfas[i] <<" (de 0 a 1)"<<endl;
+                    cin>>alfas[i];
+                }
             }
 
             vector<char> r = grafo->guloso_aleatorio_reativo(iteracoes, alfas, bloco);
@@ -533,7 +536,7 @@ void Gerenciador::comandosGulosos(Grafo* grafo) {
         }
 
         default: {
-            cout<<"Opção inválida"<<endl;
+            cout<<"Opção invalida"<<endl;
         }
     }
 }
