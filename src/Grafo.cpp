@@ -934,5 +934,131 @@ vector<char> Grafo::guloso_aleatorio(int iteracoes, float alfa)
 
 vector<char> Grafo::guloso_aleatorio_reativo(int iteracoes, vector<float> alfas, int bloco)
 {
+ srand(time(NULL));
 
+    vector<char> melhor_solucao_global;
+    int melhor_tamanho_global = lista_adj.size() + 1;
+
+    // Probabilidades iniciais iguais para todos os alfas
+    vector<float> prob(alfas.size(), 1.0 / alfas.size());
+
+    // Soma dos custos médios para cada alfa
+    vector<float> soma_resultados(alfas.size(), 0.0);
+    vector<int> cont_resultados(alfas.size(), 0);
+
+    int iter_bloco = 0;
+
+    for (int it = 0; it < iteracoes; it++)
+    {
+        // Escolhe um alfa com base nas probabilidades
+        float r = (float)rand() / RAND_MAX;
+        float acum = 0.0;
+        int idx_alfa = 0;
+
+        for (size_t i = 0; i < prob.size(); i++)
+        {
+            acum += prob[i];
+            if (r <= acum)
+            {
+                idx_alfa = i;
+                break;
+            }
+        }
+
+        float alfa_escolhido = alfas[idx_alfa];
+
+        // Executa guloso aleatório com este alfa
+        vector<char> resultado;
+        vector<char> vertices_restantes;
+
+        for (No* no : lista_adj)
+            vertices_restantes.push_back(no->getId());
+
+        while (!vertices_restantes.empty())
+        {
+            vector<pair<char, int>> candidatos;
+            for (char u : vertices_restantes)
+            {
+                No* no_u = getNoById(u);
+                int grau_u = no_u->getArestas().size();
+                candidatos.push_back({u, grau_u});
+            }
+
+            sort(candidatos.begin(), candidatos.end(),
+                 [](auto &a, auto &b) { return a.second > b.second; });
+
+            int tamanho_LRC = max(1, (int)ceil(alfa_escolhido * candidatos.size()));
+            int indice_escolhido = rand() % tamanho_LRC;
+            char v = candidatos[indice_escolhido].first;
+
+            resultado.push_back(v);
+
+            vector<char> novos_restantes;
+            No* no_v = getNoById(v);
+
+            for (char u : vertices_restantes)
+            {
+                if (u == v) continue;
+
+                bool ehVizinho = false;
+                for (Aresta* a : no_v->getArestas())
+                {
+                    if (a->getIdAlvo() == u)
+                    {
+                        ehVizinho = true;
+                        break;
+                    }
+                }
+
+                if (!ehVizinho)
+                    novos_restantes.push_back(u);
+            }
+
+            vertices_restantes = novos_restantes;
+        }
+
+        // Guarda estatísticas para este alfa
+        soma_resultados[idx_alfa] += resultado.size();
+        cont_resultados[idx_alfa]++;
+
+        // Atualiza melhor solução global
+        if ((int)resultado.size() < melhor_tamanho_global)
+        {
+            melhor_solucao_global = resultado;
+            melhor_tamanho_global = resultado.size();
+        }
+
+        iter_bloco++;
+
+        // Se terminou um bloco, ajusta probabilidades
+        if (iter_bloco == bloco)
+        {
+            vector<float> qualidade(alfas.size(), 0.0);
+            float soma_qualidade = 0.0;
+
+            for (size_t i = 0; i < alfas.size(); i++)
+            {
+                if (cont_resultados[i] > 0)
+                {
+                    qualidade[i] = 1.0 / (soma_resultados[i] / cont_resultados[i]);
+                    soma_qualidade += qualidade[i];
+                }
+            }
+
+            for (size_t i = 0; i < prob.size(); i++)
+            {
+                if (soma_qualidade > 0)
+                    prob[i] = qualidade[i] / soma_qualidade;
+                else
+                    prob[i] = 1.0 / alfas.size();
+            }
+
+            // Reinicia estatísticas
+            fill(soma_resultados.begin(), soma_resultados.end(), 0.0);
+            fill(cont_resultados.begin(), cont_resultados.end(), 0);
+            iter_bloco = 0;
+        }
+    }
+
+    return melhor_solucao_global;
 }

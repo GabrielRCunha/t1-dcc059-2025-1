@@ -1,0 +1,1 @@
+2-distance Dominating Set: i,d,k,m,a,q,r,j,b,f,s
