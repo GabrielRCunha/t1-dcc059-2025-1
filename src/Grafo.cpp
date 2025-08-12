@@ -860,16 +860,15 @@ vector<char> Grafo::guloso_aleatorio(int iteracoes, float alfa)
     srand(time(NULL)); // semente aleatória
 
     vector<char> melhor_solucao;
-    int melhor_tamanho = lista_adj.size() + 1; // número total de vértices + 1
+    int melhor_tamanho = lista_adj.size() + 1; // número total de vértices + 1, como se fosse um infinito
 
-    for (int it = 0; it < iteracoes; it++)
+    for (int it = 0; it < iteracoes; it++) // marca as iterações
     {
-        vector<char> resultado;
-        vector<char> vertices_restantes;
+        vector<char> resultado; // solução de cada iteração
+        vector<char> vertices_restantes; // vértices que ainda não foram cobertos
 
-        // Preenche com todos os vértices
-        for (No* no : lista_adj)
-            vertices_restantes.push_back(no->getId());
+        for (No* no : lista_adj) // preenche com todos os vértices
+            vertices_restantes.push_back(no->getId()); 
 
         while (!vertices_restantes.empty())
         {
