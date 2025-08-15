@@ -1,0 +1,32 @@
+Para executar o txt desejado insira os seguintes comandos:
+g++ src/*.cpp -o exec.exe
+.\exec.exe instancias/<nome do arquivo desejado>
+
+*/
+Em seguida, insira nessa ordem:
+i
+a -> Algoritmo guloso (2-distance Dominating Set)
+b -> Algoritmo guloso randomizado adaptativo (2-distance Dominating Set)
+c -> Algoritmo guloso randomizado adaptativo reativo (2-distance Dominating Set)
+
+Em caso de escolha da letra b (Algoritmo guloso randomizado adaptativo (2-distance Dominating Set)):
+Insira nessa ordem:
+Número máximo de iterações;
+Valor de alfa (de 0 a 1);
+
+Em caso de escolha da letra c (Algoritmo guloso randomizado adaptativo reativo (2-distance Dominating Set)):
+Insira nessa ordem:
+Número máximo de iterações;
+Número de alfas;
+Tamanho do bloco;
+Valores dos alfas (de 0 a 1);
+
+Por fim, caso deseje imprimir o arquivo insira:
+1
+Em caso negativo insira:
+2
+
+Os arquivos imprimidos serão os seguintes, para cada algoritmo, respectivamente:
+algoritmoGuloso.txt -> Algoritmo guloso (2-distance Dominating Set)
+algoritmoGulosoRandomizado.txt -> Algoritmo guloso randomizado adaptativo (2-distance Dominating Set)
+algoritmoGulosoRandomizadoReativo.txt -> Algoritmo guloso randomizado adaptativo reativo (2-distance Dominating Set)
